@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Sprint - Galactic Speedrunner</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #090d16;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 60%);
+            min-height: 100vh;
+            color: #f1f5f9;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .cyber-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.12), inset 0 0 15px rgba(56, 189, 248, 0.05);
+        }
+
+        .neon-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .neon-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5), 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        .neon-btn:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .ship-float {
+            animation: shipFloat 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes shipFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+            100% { transform: translateY(3px) rotate(-2deg); }
+        }
+
+        .pulse-hyper {
+            animation: hyperGlow 1.5s infinite alternate;
+        }
+
+        @keyframes hyperGlow {
+            0% { box-shadow: 0 0 10px rgba(236, 72, 153, 0.4); }
+            100% { box-shadow: 0 0 30px rgba(236, 72, 153, 0.8), 0 0 15px rgba(56, 189, 248, 0.6); }
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+            40%, 60% { transform: translate3d(7px, 0, 0); }
+        }
+
+        .pop-in {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .live-dot {
+            animation: livePulse 1.2s infinite;
+        }
+
+        @keyframes livePulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.75); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Starfield Effect */
+        .starfield {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: transparent;
+            box-shadow: 
+                120px 200px #fff, 350px 400px #38bdf8, 600px 100px #ec4899,
+                850px 500px #fff, 1100px 250px #818cf8, 1300px 600px #38bdf8,
+                200px 700px #a855f7, 500px 850px #fff, 950px 750px #ec4899,
+                1400px 150px #38bdf8, 100px 450px #818cf8, 750px 350px #fff;
+            opacity: 0.25;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); }
+        ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 3px; }
+    </style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 flex flex-col items-center justify-between min-h-screen">
+
+    <div class="starfield"></div>
+
+    <div class="w-full max-w-4xl mx-auto flex flex-col gap-4">
+
+        <!-- HEADER / NAVBAR -->
+        <header class="cyber-card rounded-2xl p-4 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-pink-500 flex items-center justify-center text-2xl shadow-lg text-white pulse-hyper">
+                    🚀
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black font-orbitron tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-500">
+                        SPACE SPRINT
+                    </h1>
+                    <p class="text-xs text-cyan-300/70 font-semibold tracking-widest uppercase">Comparisons Mastery Speedrun</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+                <!-- Energy / Score Counter -->
+                <div class="bg-cyan-950/80 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-cyan-500/40 flex items-center gap-2 shadow-inner">
+                    <i class="fa-solid fa-bolt text-amber-400 text-lg animate-pulse"></i>
+                    <span id="score-display" class="font-orbitron text-lg sm:text-xl text-cyan-300 font-bold">0</span>
+                    <span class="text-[10px] text-cyan-400/60 uppercase">PTS</span>
+                </div>
+
+                <!-- Sound Toggle -->
+                <button id="sound-btn" onclick="toggleSound()" class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-sm transition" title="Toggle Sound Engine">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+
+                <!-- Restart Mission -->
+                <button onclick="promptResetGame()" class="px-3.5 py-2 rounded-xl bg-rose-600/80 hover:bg-rose-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition shadow-lg neon-btn border border-rose-400/40">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span class="hidden sm:inline">Abort Mission</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 20-QUESTION GALACTIC RACE TRACK -->
+        <section class="cyber-card rounded-2xl p-4 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center gap-2">
+                    <span id="player-avatar" class="text-xl ship-float">👨‍🚀</span>
+                    <span id="player-name-tag" class="font-bold text-cyan-200 text-sm sm:text-base font-orbitron">Pilot</span>
+                    <span id="streak-badge" class="hidden text-xs bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 px-3 py-0.5 rounded-full font-bold text-white shadow-lg animate-bounce border border-amber-300">
+                        ⚡ HYPER-DRIVE <span id="streak-count">0</span>x!
+                    </span>
+                </div>
+                <div class="text-xs sm:text-sm text-cyan-300 font-bold font-orbitron">
+                    Gate <span id="current-q-num" class="text-pink-400 text-base sm:text-lg">1</span> / <span id="total-q-num" class="text-cyan-400">20</span>
+                </div>
+            </div>
+
+            <!-- Track Progress Bar -->
+            <div class="relative w-full h-12 bg-slate-950 rounded-xl border border-cyan-500/30 p-1 flex items-center shadow-inner">
+                <!-- Grid Overlay -->
+                <div class="absolute inset-0 opacity-30 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:12px_12px]"></div>
+
+                <!-- Warp Gate Finish -->
+                <div class="absolute right-2 top-0 bottom-0 w-8 flex items-center justify-center z-10">
+                    <div class="w-6 h-6 rounded-full bg-pink-500/30 border-2 border-pink-400 animate-ping absolute"></div>
+                    <span class="text-lg z-20">🌀</span>
+                </div>
+
+                <!-- Progress Fill -->
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-pink-500 rounded-lg transition-all duration-500 relative shadow-lg" style="width: 5%;">
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 ship-float">
+                        <div class="w-10 h-10 rounded-full bg-slate-900 border-2 border-cyan-400 flex items-center justify-center text-xl shadow-cyan-500/50 shadow-md">
+                            🚀
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stopwatch & Speed Meter -->
+            <div class="flex justify-between items-center mt-2 text-xs font-orbitron">
+                <div class="flex items-center gap-1.5 text-cyan-300">
+                    <i class="fa-solid fa-stopwatch text-pink-400"></i>
+                    <span>Mission Time: <strong id="timer-display" class="text-pink-300 font-mono text-sm">00:00.0</strong></span>
+                </div>
+                <div class="flex items-center gap-1 text-emerald-400">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Speed Multiplier: <strong id="speed-bonus-preview" class="text-amber-300">+150 MAX</strong></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUESTION & CHALLENGE CARD -->
+        <main id="game-card" class="cyber-card rounded-2xl p-5 sm:p-7 flex flex-col gap-5 relative">
+
+            <!-- Dynamic Context Clue Banner -->
+            <div id="data-clue-badge" class="px-3.5 py-2.5 rounded-xl bg-cyan-950/90 border border-cyan-400/50 text-cyan-100 text-xs sm:text-sm font-bold flex items-center gap-2.5 font-orbitron shadow-inner">
+                <i class="fa-solid fa-compass-drafting text-amber-400 text-base shrink-0"></i>
+                <div class="truncate">
+                    <span class="text-amber-300 uppercase tracking-wide font-extrabold mr-1">Context Clue:</span>
+                    <span id="data-clue-text" class="text-slate-100 font-medium">Analyzing telemetry...</span>
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-slate-900/90 rounded-2xl p-5 sm:p-6 border border-cyan-500/30 shadow-inner">
+                <div class="text-xs uppercase tracking-widest text-pink-400 font-bold mb-2 flex items-center gap-2 font-orbitron">
+                    <i class="fa-solid fa-terminal"></i> Select the matching comparison vector:
+                </div>
+                <p id="sentence-text" class="text-lg sm:text-2xl font-semibold leading-relaxed text-slate-100">
+                    Initializing warp core...
+                </p>
+                <div id="hint-box" class="mt-3 text-xs sm:text-sm text-cyan-300/80 italic hidden border-t border-cyan-900/60 pt-2.5 flex items-start gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-400 text-base mt-0.5 shrink-0"></i> 
+                    <span id="hint-text"></span>
+                </div>
+            </div>
+
+            <!-- MULTI-CHOICE NEON GRID -->
+            <div>
+                <div class="text-xs text-cyan-300/80 font-bold font-orbitron mb-3 flex justify-between items-center">
+                    <span>Engage comparison expression:</span>
+                    <span class="text-amber-300/90 text-xs hidden sm:inline"><i class="fa-solid fa-bolt"></i> Answer under 2.5s for Max Points!</span>
+                </div>
+                <div id="options-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+                    <!-- Dynamic Option Buttons -->
+                </div>
+            </div>
+
+            <!-- Feedback Toast Banner -->
+            <div id="feedback-banner" class="hidden p-4 rounded-xl flex items-center justify-between font-bold text-sm sm:text-base transition-all duration-300 border">
+                <div class="flex items-center gap-3">
+                    <span id="feedback-icon" class="text-2xl"></span>
+                    <div>
+                        <div id="feedback-title" class="font-orbitron text-base sm:text-lg"></div>
+                        <div id="feedback-detail" class="text-xs font-normal text-slate-300"></div>
+                    </div>
+                </div>
+                <div id="feedback-coins" class="font-orbitron text-amber-300 text-lg"></div>
+            </div>
+
+        </main>
+
+        <!-- CLASS REAL-TIME LEADERBOARD -->
+        <section class="cyber-card rounded-2xl p-4 sm:p-5">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                    <h3 class="font-orbitron text-lg sm:text-xl text-cyan-300 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> Galactic Cadet Leaderboard
+                    </h3>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/50 text-emerald-400 text-xs font-bold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> LIVE SYNC
+                    </span>
+                </div>
+                <button onclick="promptResetLeaderboard()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-500/40 transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Clear Scores
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-400 mb-3">Compete with classmates in real time using data clues and precision speed!</p>
+
+            <div id="leaderboard-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                <!-- Dynamic Player Ranks -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- CADET SELECT MODAL -->
+    <div id="player-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="cyber-card rounded-3xl p-6 sm:p-8 max-w-xl w-full max-h-[90vh] overflow-y-auto border border-cyan-400/40 shadow-2xl pop-in">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-pink-500 flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg text-white pulse-hyper">
+                    🚀
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black font-orbitron bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-400">
+                    SPACE SPRINT 2000
+                </h2>
+                <p class="text-sm text-cyan-200/80 mt-1">Master Comparison Expressions with Rich Context Clues!</p>
+            </div>
+
+            <!-- Student Name Grid -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-cyan-400 uppercase tracking-widest font-orbitron mb-2">Select Pilot Name:</label>
+                <div id="student-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto p-1">
+                    <!-- Dynamic Student Name Buttons -->
+                </div>
+            </div>
+
+            <!-- Custom Name Input -->
+            <div class="mb-6">
+                <label class="block text-xs text-slate-400 mb-1">Or enter custom callsign:</label>
+                <input type="text" id="custom-name-input" placeholder="Enter pilot callsign..." maxlength="15" class="w-full bg-slate-900 border border-cyan-500/40 rounded-xl px-4 py-2.5 text-cyan-200 text-sm focus:outline-none focus:border-pink-500 font-orbitron">
+            </div>
+
+            <button onclick="startGame()" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 text-white font-orbitron font-bold text-lg neon-btn shadow-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rocket"></i> LAUNCH MISSION (20 GATES)
+            </button>
+        </div>
+    </div>
+
+    <!-- CONFIRMATION MODAL -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="cyber-card rounded-3xl p-6 max-w-md w-full border border-rose-500/40 shadow-2xl pop-in text-center">
+            <div class="w-14 h-14 rounded-full bg-rose-950 text-rose-400 border border-rose-500/40 flex items-center justify-center text-2xl mx-auto mb-3">
+                <i id="confirm-icon" class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 id="confirm-title" class="font-orbitron text-xl text-slate-100 mb-2">Abort Mission?</h3>
+            <p id="confirm-msg" class="text-sm text-slate-300 mb-6">This will reset your current flight log and score.</p>
+            <div class="flex gap-3 font-orbitron">
+                <button onclick="closeConfirmModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-sm transition border border-slate-600">Cancel</button>
+                <button id="confirm-action-btn" class="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm neon-btn transition">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISSION COMPLETE / RESULTS MODAL -->
+    <div id="results-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="cyber-card rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center border border-amber-400/50 shadow-2xl pop-in">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-indigo-600 flex items-center justify-center text-4xl mx-auto mb-4 shadow-lg text-white pulse-hyper">
+                🏆
+            </div>
+            <h2 class="text-3xl font-black font-orbitron text-amber-400 mb-1">MISSION ACCOMPLISHED!</h2>
+            <p id="results-player-name" class="text-lg font-bold text-cyan-200 mb-4 font-orbitron">Pilot Completed 20 Gates!</p>
+
+            <div class="grid grid-cols-2 gap-3 mb-6 font-orbitron">
+                <div class="bg-cyan-950/80 p-3 rounded-2xl border border-cyan-500/40">
+                    <div class="text-xs text-slate-400">Total Score</div>
+                    <div id="results-score" class="text-2xl text-cyan-300 font-bold">0</div>
+                </div>
+                <div class="bg-purple-950/80 p-3 rounded-2xl border border-purple-500/40">
+                    <div class="text-xs text-slate-400">Total Time</div>
+                    <div id="results-time" class="text-2xl text-purple-300 font-mono">00:00</div>
+                </div>
+                <div class="bg-emerald-950/80 p-3 rounded-2xl border border-emerald-500/40">
+                    <div class="text-xs text-slate-400">Accuracy Rating</div>
+                    <div id="results-accuracy" class="text-2xl text-emerald-400 font-bold">100%</div>
+                </div>
+                <div class="bg-rose-950/80 p-3 rounded-2xl border border-rose-500/40">
+                    <div class="text-xs text-slate-400">Max Hyper Streak</div>
+                    <div id="results-streak" class="text-2xl text-pink-400 font-bold">0⚡</div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 font-orbitron">
+                <button onclick="restartGame()" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 text-white font-bold text-base neon-btn shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Fly Again
+                </button>
+                <button onclick="switchPlayer()" class="flex-1 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 font-bold text-base border border-cyan-500/40 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-users"></i> Change Pilot
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULES -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let auth = null;
+        let db = null;
+        let user = null;
+        let unsubscribeLeaderboard = null;
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'space-sprint-2000';
+
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const config = JSON.parse(__firebase_config);
+                    const app = initializeApp(config);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        const cred = await signInWithCustomToken(auth, __initial_auth_token);
+                        user = cred.user;
+                    } else {
+                        const cred = await signInAnonymously(auth);
+                        user = cred.user;
+                    }
+
+                    setupRealtimeLeaderboard();
+                } else {
+                    renderLocalLeaderboard();
+                }
+            } catch (err) {
+                console.error("Firebase setup error:", err);
+                renderLocalLeaderboard();
+            }
+        }
+
+        function setupRealtimeLeaderboard() {
+            if (!db || !user) return;
+            const scoresCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+
+            if (unsubscribeLeaderboard) unsubscribeLeaderboard();
+
+            unsubscribeLeaderboard = onSnapshot(scoresCol, (snapshot) => {
+                const scoresList = [];
+                snapshot.forEach(docSnap => {
+                    scoresList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                scoresList.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.timeMs || 999999) - (b.timeMs || 999999));
+                if (typeof window.renderLeaderboardUI === 'function') {
+                    window.renderLeaderboardUI(scoresList);
+                }
+            }, (error) => {
+                console.error("Leaderboard sync error:", error);
+                renderLocalLeaderboard();
+            });
+        }
+
+        function renderLocalLeaderboard() {
+            const localScores = JSON.parse(localStorage.getItem('space_sprint_scores') || '[]');
+            if (typeof window.renderLeaderboardUI === 'function') {
+                window.renderLeaderboardUI(localScores);
+            }
+        }
+
+        window.syncProgress = async function(status = "racing") {
+            if (!db || !user || !selectedPlayer) return;
+
+            const docKey = selectedPlayer.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const scoreDoc = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docKey);
+            const totalTimeMs = Date.now() - gameStartTime;
+
+            try {
+                await setDoc(scoreDoc, {
+                    name: selectedPlayer,
+                    score: scorePoints,
+                    currentQ: Math.min(currentQuestionIndex + 1, 20),
+                    totalQ: 20,
+                    status: status,
+                    accuracy: currentQuestionIndex > 0 ? Math.round((correctCount / currentQuestionIndex) * 100) : 100,
+                    timeMs: totalTimeMs,
+                    timeStr: document.getElementById('timer-display')?.innerText || "00:00.0",
+                    updatedAt: Date.now()
+                }, { merge: true });
+            } catch (e) {
+                console.error("Failed to sync score:", e);
+            }
+        };
+
+        window.clearClassLeaderboard = async function() {
+            if (db && user) {
+                try {
+                    const scoresCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                    const snapshot = await getDocs(scoresCol);
+                    const deletePromises = snapshot.docs.map(docSnap => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docSnap.id)));
+                    await Promise.all(deletePromises);
+                } catch (e) {
+                    console.error("Error clearing scores:", e);
+                }
+            }
+            localStorage.removeItem('space_sprint_scores');
+            if (typeof window.renderLeaderboardUI === 'function') {
+                window.renderLeaderboardUI([]);
+            }
+        };
+
+        initFirebase();
+    </script>
+
+    <script>
+        // High-Quality Vocabulary Pool with EXPLICIT CONTEXT CLUES & TELEMETRY DATA
+        const MASTER_VOCAB_POOL = [
+            // like
+            { 
+                id: 1, 
+                word: "like", 
+                pos: "Preposition", 
+                dataClue: "🚀 Visual Data: Long pointed nose & bright yellow eraser cap",
+                sentence: "With its long pointed nose and yellow top, the shiny blue shuttle looks ________ a giant wooden pencil.", 
+                hint: "Use 'like' + noun phrase to compare appearance (look + like + noun phrase)." 
+            },
+            { 
+                id: 2, 
+                word: "like", 
+                pos: "Preposition", 
+                dataClue: "🌊 Gravity Sensor: Zero-G float sensation = Underwater buoyancy",
+                sentence: "Training in zero gravity is strange; floating freely through space feels ________ swimming underwater.", 
+                hint: "Use 'like' + verb-ing/noun to compare physical sensations (feel + like + action)." 
+            },
+
+            // alike
+            { 
+                id: 3, 
+                word: "alike", 
+                pos: "Adjective", 
+                dataClue: "👥 Visual Scanner: Both alien pets share 100% identical green fur & 3 eyes",
+                sentence: "Both alien pets have identical green fur and three glowing eyes, so they look completely ________.", 
+                hint: "Use 'alike' at the END of a sentence when comparing two subjects together with NO following noun object." 
+            },
+            { 
+                id: 4, 
+                word: "alike", 
+                pos: "Adverb", 
+                dataClue: "👨‍🚀 Cadet Uniforms: Pilot A wears purple armor; Pilot B wears identical purple armor",
+                sentence: "Although they come from different planets, both space pilots wear identical purple armor and dress ________.", 
+                hint: "Use 'alike' as a predicate word after a verb (e.g. dress alike) when two subjects act in the exact same manner." 
+            },
+
+            // the same as
+            { 
+                id: 5, 
+                word: "the same as", 
+                pos: "Phrase", 
+                dataClue: "🎨 Color Meter: Suit Alpha = Neon Blue | Suit Beta = Neon Blue",
+                sentence: "My suit is neon blue, and your suit is also neon blue. My suit color is ________ your suit color.", 
+                hint: "Use 'the same as' when two items possess 100% identical characteristics." 
+            },
+            { 
+                id: 6, 
+                word: "the same as", 
+                pos: "Phrase", 
+                dataClue: "⏱️ Speed Telemetry: Rocket X = 10,000 km/h | Rocket Y = 10,000 km/h",
+                sentence: "Rocket X flies at 10,000 km/h, and Rocket Y also flies at 10,000 km/h. The speed of Rocket X is ________ Rocket Y.", 
+                hint: "Use 'the same as' when two exact numerical measurements match." 
+            },
+
+            // different from
+            { 
+                id: 7, 
+                word: "different from", 
+                pos: "Phrase", 
+                dataClue: "🪐 Environment Scan: Mars = Red Dust Desert | Earth = Blue Oceans & Trees",
+                sentence: "Mars is covered in dry red dust, while Earth is covered in blue oceans and trees. Life on Mars is very ________ life on Earth.", 
+                hint: "Use 'different from' when contrasting two items that have clear contrasting properties." 
+            },
+            { 
+                id: 8, 
+                word: "different from", 
+                pos: "Phrase", 
+                dataClue: "🍕 Taste Analysis: Hot fresh pizza = Juicy & soft | Space pizza = Dry crunchy cube",
+                sentence: "Fresh Earth pizza is hot and soft, but space pizza is a dry freeze-dried cube. Space food tastes completely ________ normal food.", 
+                hint: "Use 'different from' when pointing out a distinct contrast in experience or quality." 
+            },
+
+            // as ... as
+            { 
+                id: 9, 
+                word: "as ... as", 
+                pos: "Comparative", 
+                dataClue: "🤖 AI Benchmark: Robot A solves 100 calculations/sec | Robot B solves 100 calculations/sec",
+                sentence: "Robot A solves 100 math problems per second, and Robot B also solves 100 per second. Robot A is ________ smart ________ Robot B.", 
+                hint: "Use 'as [adjective] as' when two subjects possess an equal degree of a quality." 
+            },
+            { 
+                id: 10, 
+                word: "as ... as", 
+                pos: "Comparative", 
+                dataClue: "🛸 Radar Speed: Blue Shuttle = Mach 5 | Red Shuttle = Mach 5",
+                sentence: "The blue shuttle flies at Mach 5, and the red shuttle also flies at Mach 5. The blue shuttle is ________ fast ________ the red shuttle.", 
+                hint: "Use 'as [adjective] as' to state that two objects reach the exact same speed or level." 
+            },
+            { 
+                id: 11, 
+                word: "as ... as", 
+                pos: "Comparative", 
+                dataClue: "🌌 Starlight Radar: Star City = 500 light-years | Moon City = 500 light-years",
+                sentence: "Star City is 500 light-years away, and Moon City is also 500 light-years away. Star City is ________ far ________ Moon City.", 
+                hint: "Use 'as [adjective] as' to express equal physical distance." 
+            },
+
+            // less ... than
+            { 
+                id: 12, 
+                word: "less ... than", 
+                pos: "Comparative", 
+                dataClue: "🏷️ Price Tag: Toy Model = $5 | Real Starship = $5,000,000",
+                sentence: "A toy shuttle model costs only $5, but a real starship costs $5,000,000. The toy shuttle is ________ expensive ________ the real starship.", 
+                hint: "Use 'less [adjective] than' when something has a smaller cost or lower degree than another item." 
+            },
+            { 
+                id: 13, 
+                word: "less ... than", 
+                pos: "Comparative", 
+                dataClue: "⚖️ Weight Scale: Carbon Helmet = 2 kg | Iron Diving Suit = 25 kg",
+                sentence: "An carbon-fiber helmet weighs only 2 kg, while an iron diving suit weighs 25 kg. The space helmet is ________ heavy ________ the iron suit.", 
+                hint: "Use 'less [adjective] than' when indicating a lower amount of weight or intensity." 
+            },
+
+            // more ... than
+            { 
+                id: 14, 
+                word: "more ... than", 
+                pos: "Comparative", 
+                dataClue: "⚡ Engine Output: Rocket Alpha = 10,000 HP | Rocket Beta = 2,000 HP",
+                sentence: "Rocket Alpha produces 10,000 horsepower, but Rocket Beta only produces 2,000 horsepower. Rocket Alpha is ________ powerful ________ Rocket Beta.", 
+                hint: "Use 'more [adjective] than' when an item has a greater degree of strength or power." 
+            },
+            { 
+                id: 15, 
+                word: "more ... than", 
+                pos: "Comparative", 
+                dataClue: "⚠️ Hazard Index: Deep Space Mission = 95% Hazard | Simulator Game = 0% Hazard",
+                sentence: "Deep space missions carry radiation hazards, while video games are 100% safe. Real space travel is ________ dangerous ________ playing video games.", 
+                hint: "Use 'more [adjective] than' when one item has a higher level of risk or intensity." 
+            },
+            { 
+                id: 16, 
+                word: "more ... than", 
+                pos: "Comparative", 
+                dataClue: "⏱️ Time Log: Flight to Jupiter = 6 Years | Flight to Moon = 3 Days",
+                sentence: "Flying to Jupiter takes 6 years, but flying to the Moon takes only 3 days. Flying to Jupiter takes ________ time ________ flying to the Moon.", 
+                hint: "Use 'more [noun] than' when comparing greater quantities or durations of time." 
+            },
+
+            // the most
+            { 
+                id: 17, 
+                word: "the most", 
+                pos: "Superlative", 
+                dataClue: "🏆 Career Survey: Astronaut = Ranked #1 out of 50 careers",
+                sentence: "Out of all 50 galactic careers, space exploration was voted #1 in excitement. It is ________ exciting job in the galaxy.", 
+                hint: "Use 'the most [adjective]' for the highest superlative degree among 3 or more items." 
+            },
+            { 
+                id: 18, 
+                word: "the most", 
+                pos: "Superlative", 
+                dataClue: "🍕 Meal Audit: Hot Pizza = 95% votes | Soup = 3% votes | Salad = 2% votes",
+                sentence: "95% of the space crew voted for hot pizza, while salad got only 2%. Hot pizza is ________ popular meal on the space station.", 
+                hint: "Use 'the most' when an item holds the absolute highest preference rating." 
+            },
+
+            // the least
+            { 
+                id: 19, 
+                word: "the least", 
+                pos: "Superlative", 
+                dataClue: "💡 Power Audit: Tiny Beacon = 1 Watt | Radar = 500 Watts | Engine = 5,000 Watts",
+                sentence: "The tiny emergency beacon uses 1 watt, while all other ship systems use over 500 watts. This tiny beacon uses ________ amount of power on the ship.", 
+                hint: "Use 'the least' for the absolute lowest quantity or smallest power draw." 
+            },
+            { 
+                id: 20, 
+                word: "the least", 
+                pos: "Superlative", 
+                dataClue: "🗺️ Flight Route Hazards: Route A = 15 asteroids | Route B = 8 asteroids | Route C = 1 asteroid",
+                sentence: "Route A has 15 asteroids, Route B has 8 asteroids, but Route C has only 1 asteroid. Route C is ________ dangerous path for young cadets.", 
+                hint: "Use 'the least [adjective]' when an option has the lowest amount of danger or difficulty." 
+            },
+
+            // fewer ... than
+            { 
+                id: 21, 
+                word: "fewer ... than", 
+                pos: "Comparative", 
+                dataClue: "⭐ Telescope Count: Photo Alpha = 3 stars | Photo Beta = 25 stars",
+                sentence: "Telescope Photo Alpha shows only 3 stars, but Photo Beta shows 25 stars. Photo Alpha has ________ stars ________ Photo Beta.", 
+                hint: "Use 'fewer [countable noun] than' when comparing a smaller count of countable objects (like stars)." 
+            },
+            { 
+                id: 22, 
+                word: "fewer ... than", 
+                pos: "Comparative", 
+                dataClue: "📋 Exam Error Log: Cadet Sam = 1 error | Cadet Ben = 6 errors",
+                sentence: "Cadet Sam made only 1 error on the pilot test, but Cadet Ben made 6 errors. Cadet Sam made ________ errors ________ Cadet Ben.", 
+                hint: "Use 'fewer ... than' with plural countable nouns like 'errors' or 'mistakes'." 
+            },
+
+            // the fewest
+            { 
+                id: 23, 
+                word: "the fewest", 
+                pos: "Superlative", 
+                dataClue: "🥇 Flight Audit: Pilot Leo = 0 errors | Pilot Max = 4 errors | Pilot Mia = 7 errors",
+                sentence: "Pilot Leo made 0 errors, Pilot Max made 4 errors, and Pilot Mia made 7 errors. Pilot Leo made ________ errors during the race.", 
+                hint: "Use 'the fewest' with countable nouns for the smallest number among three or more people." 
+            },
+            { 
+                id: 24, 
+                word: "the fewest", 
+                pos: "Superlative", 
+                dataClue: "🛢️ Fuel Audit: Team Alpha = 2 cans | Team Beta = 6 cans | Team Gamma = 10 cans",
+                sentence: "Team Alpha used 2 fuel cans, Team Beta used 6 cans, and Team Gamma used 10 cans. Team Alpha used ________ fuel cans during the race.", 
+                hint: "Use 'the fewest' for the absolute lowest count of plural countable items." 
+            }
+        ];
+
+        // Class Roster
+        const STUDENTS = [
+            "Ms Barker", "Billy", "Nathan", "Hazel", "Cherry", "Alex", "Ken", 
+            "Chloe Lau", "Mabel", "Michael", "Emma", "Polly", "Kiki", 
+            "Aimee", "Chloe Wong", "Cyrus", "Issac", "Pierce", "Fabian", 
+            "Vincent", "Kitty", "Yuki", "Ryson", "Leo"
+        ];
+
+        const TOTAL_GATES = 20;
+
+        // Web Audio Synthesizer
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'laser') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+                    osc.start(now);
+                    osc.stop(now + 0.28);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(120, now + 0.12);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'finish') {
+                    const freqs = [523.25, 659.25, 783.99, 1046.50];
+                    freqs.forEach((f, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.type = 'triangle';
+                        o.frequency.setValueAtTime(f, now + i * 0.09);
+                        g.gain.setValueAtTime(0.25, now + i * 0.09);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.09 + 0.35);
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.start(now + i * 0.09);
+                        o.stop(now + i * 0.09 + 0.35);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio synth error", e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById("sound-icon");
+            const btn = document.getElementById("sound-btn");
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                btn.classList.remove("opacity-40");
+                playSound('laser');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+                btn.classList.add("opacity-40");
+            }
+        }
+
+        // Game State Variables
+        let selectedPlayer = "Pilot";
+        let currentQuestionIndex = 0;
+        let active20Questions = [];
+        let scorePoints = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let correctCount = 0;
+        let questionStartTime = 0;
+        let gameStartTime = 0;
+        let timerInterval = null;
+        let isAnsweringLocked = false;
+
+        function initStudentGrid() {
+            const grid = document.getElementById('student-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            STUDENTS.forEach(name => {
+                const btn = document.createElement('button');
+                btn.className = "p-2.5 rounded-xl bg-slate-900 hover:bg-cyan-500 hover:text-slate-950 border border-cyan-500/30 font-bold text-xs text-cyan-200 transition text-center truncate shadow font-orbitron";
+                btn.innerText = name;
+                btn.onclick = () => {
+                    document.querySelectorAll('#student-grid button').forEach(b => {
+                        b.classList.remove('bg-cyan-400', 'text-slate-950');
+                        b.classList.add('bg-slate-900', 'text-cyan-200');
+                    });
+                    btn.classList.remove('bg-slate-900', 'text-cyan-200');
+                    btn.classList.add('bg-cyan-400', 'text-slate-950');
+                    selectedPlayer = name;
+                    document.getElementById('custom-name-input').value = '';
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function updateTimerDisplay() {
+            if (!gameStartTime) return;
+            const elapsed = Date.now() - gameStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            const ms = Math.floor((elapsed % 1000) / 100);
+            const timerElem = document.getElementById('timer-display');
+            if (timerElem) {
+                timerElem.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${ms}`;
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            const customInput = document.getElementById('custom-name-input').value.trim();
+            if (customInput) {
+                selectedPlayer = customInput;
+            }
+
+            document.getElementById('player-name-tag').innerText = selectedPlayer;
+            document.getElementById('player-modal').classList.add('hidden');
+
+            scorePoints = 0;
+            streak = 0;
+            maxStreak = 0;
+            correctCount = 0;
+            currentQuestionIndex = 0;
+
+            document.getElementById('score-display').innerText = '0';
+            document.getElementById('streak-badge').classList.add('hidden');
+
+            // Select 20 randomized questions from comparison pool
+            const shuffledMaster = shuffleArray(MASTER_VOCAB_POOL);
+            active20Questions = shuffledMaster.slice(0, TOTAL_GATES);
+            document.getElementById('total-q-num').innerText = TOTAL_GATES;
+
+            gameStartTime = Date.now();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerDisplay, 100);
+
+            loadQuestion();
+            playSound('laser');
+
+            if (window.syncProgress) window.syncProgress("racing");
+        }
+
+        function loadQuestion() {
+            isAnsweringLocked = false;
+            questionStartTime = Date.now();
+
+            const q = active20Questions[currentQuestionIndex];
+
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            const progressPercent = ((currentQuestionIndex + 1) / TOTAL_GATES) * 100;
+            document.getElementById('progress-bar').style.width = `${Math.max(5, progressPercent)}%`;
+
+            const feedback = document.getElementById('feedback-banner');
+            feedback.className = 'hidden p-4 rounded-xl flex items-center justify-between font-bold text-sm sm:text-base transition-all duration-300';
+
+            // Display rich telemetry data clue badge
+            document.getElementById('data-clue-text').innerText = q.dataClue || "Observation telemetry loaded.";
+
+            // Format double-gap or single-gap sentences
+            let formattedSentence = q.sentence;
+            if (q.word.includes(' ... ')) {
+                formattedSentence = formattedSentence
+                    .replace('________', `<span class="sentence-gap inline-block px-3 py-1 mx-1 border-b-4 border-dashed border-cyan-400 text-cyan-300 font-bold bg-cyan-950/80 rounded-lg min-w-[60px] text-center font-orbitron">?</span>`)
+                    .replace('________', `<span class="sentence-gap inline-block px-3 py-1 mx-1 border-b-4 border-dashed border-cyan-400 text-cyan-300 font-bold bg-cyan-950/80 rounded-lg min-w-[60px] text-center font-orbitron">?</span>`);
+            } else {
+                formattedSentence = formattedSentence.replace('________', 
+                    `<span class="sentence-gap inline-block px-3 py-1 mx-1 border-b-4 border-dashed border-cyan-400 text-cyan-300 font-bold bg-cyan-950/80 rounded-lg min-w-[100px] text-center font-orbitron">?</span>`
+                );
+            }
+            document.getElementById('sentence-text').innerHTML = formattedSentence;
+
+            document.getElementById('hint-text').innerText = `[${q.pos}] ${q.hint}`;
+            document.getElementById('hint-box').classList.remove('hidden');
+
+            // Collect distinct comparison words for options
+            const allWords = [...new Set(MASTER_VOCAB_POOL.map(i => i.word))];
+            const otherWords = allWords.filter(w => w !== q.word);
+            const shuffledOther = shuffleArray(otherWords).slice(0, 7);
+            const optionPool = shuffleArray([q.word, ...shuffledOther]);
+
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+
+            optionPool.forEach(wordStr => {
+                const itemMatch = MASTER_VOCAB_POOL.find(i => i.word === wordStr);
+                const posStr = itemMatch ? itemMatch.pos : 'Comparative';
+
+                const btn = document.createElement('button');
+                btn.className = "neon-btn bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 hover:border-pink-500 rounded-xl p-3 sm:p-4 text-center font-bold text-sm sm:text-base text-cyan-100 flex flex-col items-center justify-center gap-1 transition duration-150 min-h-[64px] shadow-lg font-orbitron";
+                btn.innerHTML = `
+                    <span>${wordStr}</span>
+                    <span class="text-[10px] text-cyan-400/60 font-normal">(${posStr})</span>
+                `;
+                btn.onclick = () => handleAnswer(wordStr, q.word, btn);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedWord, correctWord, clickedBtn) {
+            if (isAnsweringLocked) return;
+            isAnsweringLocked = true;
+
+            const qTimeSec = (Date.now() - questionStartTime) / 1000;
+            const isCorrect = (selectedWord === correctWord);
+
+            const gapElements = document.querySelectorAll('.sentence-gap');
+            const feedback = document.getElementById('feedback-banner');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDetail = document.getElementById('feedback-detail');
+            const feedbackCoins = document.getElementById('feedback-coins');
+
+            const allBtns = document.querySelectorAll('#options-grid button');
+
+            if (isCorrect) {
+                playSound('correct');
+                correctCount++;
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+
+                let speedBonus = 0;
+                if (qTimeSec <= 2.5) speedBonus = 150;
+                else if (qTimeSec <= 5.0) speedBonus = 90;
+                else if (qTimeSec <= 8.0) speedBonus = 40;
+
+                let multiplier = 1.0;
+                if (streak >= 8) multiplier = 2.0;
+                else if (streak >= 4) multiplier = 1.5;
+                else if (streak >= 2) multiplier = 1.2;
+
+                const basePoints = 100;
+                const earned = Math.round((basePoints + speedBonus) * multiplier);
+                scorePoints += earned;
+
+                document.getElementById('score-display').innerText = scorePoints;
+
+                const correctParts = correctWord.split(' ... ');
+                gapElements.forEach((el, idx) => {
+                    el.innerText = correctParts[idx] || correctParts[0];
+                    el.className = "sentence-gap inline-block px-3 py-1 mx-1 border-b-4 border-emerald-400 text-emerald-300 font-bold bg-emerald-950/90 rounded-lg text-center pop-in font-orbitron";
+                });
+
+                clickedBtn.classList.remove('bg-slate-900/90', 'border-cyan-500/40');
+                clickedBtn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white', 'scale-105');
+
+                feedback.classList.remove('hidden');
+                feedback.className = "p-4 rounded-xl flex items-center justify-between font-bold text-sm sm:text-base bg-emerald-950/90 border border-emerald-500 text-emerald-200 pop-in shadow-lg";
+                feedbackIcon.innerText = "⚡";
+                feedbackTitle.innerText = "GATE CLEARED!";
+                feedbackDetail.innerText = `Time: ${qTimeSec.toFixed(1)}s! (${speedBonus > 0 ? '+' + speedBonus + ' Speed Bonus' : 'Base Speed'}) ${multiplier > 1 ? multiplier + 'x Streak Multiplier!' : ''}`;
+                feedbackCoins.innerText = `+${earned} PTS`;
+
+                if (streak >= 2) {
+                    const streakBadge = document.getElementById('streak-badge');
+                    streakBadge.classList.remove('hidden');
+                    document.getElementById('streak-count').innerText = streak;
+                }
+
+            } else {
+                playSound('wrong');
+                streak = 0;
+                document.getElementById('streak-badge').classList.add('hidden');
+
+                const selectedParts = selectedWord.split(' ... ');
+                gapElements.forEach((el, idx) => {
+                    el.innerText = selectedParts[idx] || selectedParts[0];
+                    el.className = "sentence-gap inline-block px-3 py-1 mx-1 border-b-4 border-rose-500 text-rose-300 font-bold bg-rose-950/90 rounded-lg text-center shake font-orbitron";
+                });
+
+                clickedBtn.classList.remove('bg-slate-900/90', 'border-cyan-500/40');
+                clickedBtn.classList.add('bg-rose-600', 'border-rose-400', 'text-white', 'shake');
+
+                allBtns.forEach(btn => {
+                    if (btn.innerText.includes(correctWord)) {
+                        btn.classList.remove('bg-slate-900/90');
+                        btn.classList.add('bg-emerald-600', 'border-emerald-400', 'text-white', 'pulse-hyper');
+                    }
+                });
+
+                feedback.classList.remove('hidden');
+                feedback.className = "p-4 rounded-xl flex items-center justify-between font-bold text-sm sm:text-base bg-rose-950/90 border border-rose-500 text-rose-200 pop-in shadow-lg";
+                feedbackIcon.innerText = "❌";
+                feedbackTitle.innerText = "VECTOR MISALIGNED!";
+                feedbackDetail.innerText = `Target expression was: "${correctWord}"`;
+                feedbackCoins.innerText = "+0 PTS";
+            }
+
+            if (window.syncProgress) window.syncProgress("racing");
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < TOTAL_GATES) {
+                    loadQuestion();
+                } else {
+                    finishGame();
+                }
+            }, isCorrect ? 1100 : 2000);
+        }
+
+        function finishGame() {
+            clearInterval(timerInterval);
+            playSound('finish');
+
+            const totalTimeMs = Date.now() - gameStartTime;
+            const minutes = Math.floor(totalTimeMs / 60000);
+            const seconds = Math.floor((totalTimeMs % 60000) / 1000);
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            const accuracy = Math.round((correctCount / TOTAL_GATES) * 100);
+
+            document.getElementById('results-player-name').innerText = `Pilot ${selectedPlayer} Cleared All 20 Gates!`;
+            document.getElementById('results-score').innerText = scorePoints;
+            document.getElementById('results-time').innerText = formattedTime;
+            document.getElementById('results-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('results-streak').innerText = `${maxStreak}⚡`;
+
+            if (window.syncProgress) window.syncProgress("finished");
+
+            document.getElementById('results-modal').classList.remove('hidden');
+        }
+
+        window.renderLeaderboardUI = function(scores) {
+            const container = document.getElementById('leaderboard-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!scores || scores.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-cyan-400/50 text-center py-6 italic border border-dashed border-cyan-500/20 rounded-xl font-orbitron">No pilots logged on current frequency. Launch mission to post score!</div>`;
+                return;
+            }
+
+            const ranks = ['🥇', '🥈', '🥉'];
+
+            scores.forEach((item, idx) => {
+                const div = document.createElement('div');
+                const isFinished = item.status === 'finished';
+                const rankDisplay = ranks[idx] || `#${idx + 1}`;
+                
+                div.className = `p-3 rounded-xl border flex flex-col justify-between gap-2 shadow transition ${
+                    isFinished ? 'bg-indigo-950/60 border-indigo-500/50' : 'bg-slate-900/80 border-cyan-500/30'
+                }`;
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 font-orbitron">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="text-base">${rankDisplay}</span>
+                            <span class="font-bold text-cyan-200 truncate">${item.name}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            isFinished 
+                                ? 'bg-amber-950 text-amber-300 border border-amber-500/50' 
+                                : 'bg-emerald-950 text-emerald-400 border border-emerald-500/50 flex items-center gap-1'
+                        }">
+                            ${isFinished ? '🏁 FINISHED (20/20)' : '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span> GATE ' + (item.currentQ || 1) + '/20'}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs font-mono pt-1 border-t border-cyan-900/40">
+                        <div class="flex items-center gap-1 text-amber-400 font-bold font-orbitron">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>${item.score || 0} pts</span>
+                        </div>
+                        <div class="text-cyan-300/70">
+                            ⏱️ ${item.timeStr || "00:00"}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        };
+
+        let activeConfirmCallback = null;
+
+        function showConfirmModal(title, message, iconClass, onConfirm) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-msg').innerText = message;
+            document.getElementById('confirm-icon').className = iconClass;
+            activeConfirmCallback = onConfirm;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            activeConfirmCallback = null;
+        }
+
+        document.getElementById('confirm-action-btn').onclick = function() {
+            if (activeConfirmCallback) activeConfirmCallback();
+            closeConfirmModal();
+        };
+
+        function promptResetGame() {
+            showConfirmModal(
+                "Abort Mission?", 
+                "Resets flight timer, score points, and gate sequence back to Gate 1.", 
+                "fa-solid fa-rotate-left text-rose-400", 
+                () => {
+                    clearInterval(timerInterval);
+                    document.getElementById('player-modal').classList.remove('hidden');
+                }
+            );
+        }
+
+        function promptResetLeaderboard() {
+            showConfirmModal(
+                "Clear Class Scores?", 
+                "Wipe live leaderboard entries for all pilots?", 
+                "fa-solid fa-trash-can text-rose-400", 
+                () => {
+                    if (window.clearClassLeaderboard) window.clearClassLeaderboard();
+                }
+            );
+        }
+
+        function restartGame() {
+            document.getElementById('results-modal').classList.add('hidden');
+            startGame();
+        }
+
+        function switchPlayer() {
+            document.getElementById('results-modal').classList.add('hidden');
+            document.getElementById('player-modal').classList.remove('hidden');
+        }
+
+        window.onload = function() {
+            initStudentGrid();
+        };
+    </script>
+</body>
+</html>
